@@ -1,33 +1,62 @@
 package world
 
-import "strings"
+import (
+	"strings"
+)
 
 type Room struct {
-	X, Y int // position of top left corner in the parent World
+	Y, X int // position of top left corner in the parent World
 	Grid [][]Material
 }
 
 type World struct {
-	Width, Height int
-	Rooms         []Room
+	Rooms []Room
 }
 
-const firstRoom = `
-#####
-#...#
-#...#
-#...#
-#####
-`
+func width(lines []string) (width int) {
+	for _, line := range lines {
+		if len(line) > width {
+			width = len(line)
+		}
+	}
+	return width
+}
 
 func roomStringToRoom(str string) Room {
-	trimmed := strings.TrimSpace(str)
-	width = str
+	lines := strings.Split(strings.TrimSpace(str), "\n")
+	width := width(lines)
+	height := len(lines)
+	grid := make([][]Material, height)
+
+	for y := range lines {
+		grid[y] = make([]Material, width)
+		for x := range lines[y] {
+			grid[y][x] = toMaterial(lines[y][x])
+		}
+	}
+
+	return Room{
+		X:    0,
+		Y:    0,
+		Grid: grid,
+	}
 }
 
+const testRoom = `
+###############
+#.............#
+#.............#
+#.............#
+#.............#
+#.............#
+###############
+`
+
 func GenerateWorld() World {
-	room := Room{
-		X: 0,
-		Y: 0,
+	room := roomStringToRoom(testRoom)
+	return World{
+		Rooms: []Room{
+			room,
+		},
 	}
 }
